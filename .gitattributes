@@ -5,6 +5,8 @@ node_modules filter=lfs diff=lfs merge=lfs -text
 package.json filter=lfs diff=lfs merge=lfs -text
 package-lock.json filter=lfs diff=lfs merge=lfs -text
 README.md filter=lfs diff=lfs merge=lfs -text
+*.dll filter=lfs diff=lfs merge=lfs -text
+*.exe filter=lfs diff=lfs merge=lfs -text
 /.wwebjs_auth/session/Crashpad/metadata filter=lfs diff=lfs merge=lfs -text
 *.dat filter=lfs diff=lfs merge=lfs -text
 /.wwebjs_auth/session/Default/Cache/Cache_Data/data_0 filter=lfs diff=lfs merge=lfs -text
@@ -1007,10 +1009,8 @@ README.md filter=lfs diff=lfs merge=lfs -text
 /node_modules/progress/Makefile filter=lfs diff=lfs merge=lfs -text
 /node_modules/proxy-from-env/LICENSE filter=lfs diff=lfs merge=lfs -text
 *.manifest filter=lfs diff=lfs merge=lfs -text
-*.dll filter=lfs diff=lfs merge=lfs -text
 /node_modules/puppeteer/.local-chromium/win64-982053/chrome-win/First Run filter=lfs diff=lfs merge=lfs -text
 *.pb filter=lfs diff=lfs merge=lfs -text
-*.exe filter=lfs diff=lfs merge=lfs -text
 *.pak filter=lfs diff=lfs merge=lfs -text
 *.nexe filter=lfs diff=lfs merge=lfs -text
 *.bin filter=lfs diff=lfs merge=lfs -text
