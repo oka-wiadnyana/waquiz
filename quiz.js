@@ -29,25 +29,23 @@ function initializeQuiz(quizzes, adminId, groupId, groupName) {
     return `Quiz ID: ${quiz.id} has been initialized by @${adminId} in group ${groupName}`;
 }
 
-function addParticipants(quizId, participants) {
-    const quiz = quizzes.find(q => q.id === quizId);
+function addParticipants(quiz, newParticipants) {
+    if (quiz.status !== 'initialized') return 'No initialized quiz to add participants.';
 
-    if (!quiz || quiz.status !== 'initialized') return 'No active quiz to add participants.';
-
-    participants.forEach(participant => {
+    newParticipants.forEach(participant => {
         const existingParticipant = quiz.participants.find(p => p.id === participant.id);
 
         if (!existingParticipant) {
             quiz.participants.push({
                 id: participant.id,
-                name: participant.name,
+                name: participant.name || participant.pushname,
                 phoneNumber: participant.number,
                 score: 0,
             });
         }
     });
 
-    return `${participants.length} participants added to the quiz.`;
+    return `${newParticipants.length} participants added to the quiz.`;
 }
 
 async function startQuiz(quizId) {
@@ -77,7 +75,7 @@ async function askNextQuestion(quiz) {
             const correctParticipant = quiz.participants.find(p => p.id._serialized === message.author);
             if (correctParticipant) {
                 correctParticipant.score++;
-                client.sendMessage(quiz.group.id, `✔ Correct answer by @${correctParticipant.id.user}`);
+                client.sendMessage(quiz.group.id._serialized, `✔ Correct answer by @${correctParticipant.id.user}`);
                 client.removeListener('message_create', answerListener);
             }
         }

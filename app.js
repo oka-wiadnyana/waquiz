@@ -37,4 +37,24 @@ client.on('message_create', async message => {
         const response = initializeQuiz(quizzes, adminId, groupId, groupName);
         await chat.sendMessage(response);
     }
+
+    if (message.body.startsWith('!add')) {
+        const chat = await message.getChat();
+        const quiz = quizzes.find(q => q.group.id.user === chat.id.user);
+        
+        if (!quiz) {
+            await message.reply('No quiz initialized in this group.');
+            return;
+        }
+
+        const newParticipants = await Promise.all(
+            message.mentionedIds.map(async (id) => {
+                const contact = await client.getContactById(id);
+                return contact;
+            })
+        );
+
+        const response = addParticipants(quiz, newParticipants);
+        await chat.sendMessage(response);
+    }
 });
