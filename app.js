@@ -15,6 +15,11 @@ client.on('qr', qr => {
     qrcode.generate(qr, {small: true});
 });
 
+client.on('disconnected', () => {
+    console.log('Client disconnected. Attempting to restart...');
+    client.initialize();
+  });
+
 client.initialize();
 
 let quizzes = [];
@@ -38,7 +43,7 @@ client.on('message_create', async message => {
         await chat.sendMessage(response);
     }
 
-    if (message.body.startsWith('!add')) {
+    if (typeof message.body === 'string' && message.body.startsWith('!add')) {
         const chat = await message.getChat();
         const quiz = quizzes.find(q => q.group.id.user === chat.id.user);
         
@@ -55,6 +60,19 @@ client.on('message_create', async message => {
         );
 
         const response = addParticipants(quiz, newParticipants);
+        await chat.sendMessage(response);
+    }
+
+    if (message.body === '!start') {
+        const chat = await message.getChat();
+        const quiz = quizzes.find(q => q.group.id.user === chat.id.user);
+
+        if (!quiz) {
+            await message.reply('No quiz initialized in this group.');
+            return;
+        }
+        
+        const response = startQuiz(client, quiz);
         await chat.sendMessage(response);
     }
 });

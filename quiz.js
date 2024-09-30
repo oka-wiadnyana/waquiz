@@ -13,8 +13,16 @@ function initializeQuiz(quizzes, adminId, groupId, groupName) {
         participants: [],
         questions: [
             {
-                text: 'question',
-                correctAnswer: 'answer',
+                text: 'example question 1',
+                correctAnswer: 'answer 1',
+            },
+            {
+                text: 'example question 2',
+                correctAnswer: 'answer 2',
+            },
+            {
+                text: 'example question 3',
+                correctAnswer: 'answer 3',
             }
         ],
         currentQuestionIndex: 0,
@@ -48,30 +56,31 @@ function addParticipants(quiz, newParticipants) {
     return `${newParticipants.length} participants added to the quiz.`;
 }
 
-async function startQuiz(quizId) {
-    const quiz = quizzes.find(q => q.id === quizId);
-
-    if (!quiz || quiz.status !== 'initialized') return 'No quiz to start.';
+async function startQuiz(client, quiz) {
+    if (quiz.status !== 'initialized') return 'No quiz to start.';
 
     quiz.status = 'started';
     quiz.startTime = new Date();
 
-    await askNextQuestion(quiz);
+    await askNextQuestion(client, quiz);
     
-    return `Quiz ${quizId} just started!`;
+    return `Quiz ID: ${quiz.id} just started!`;
 }
 
-async function askNextQuestion(quiz) {
+async function askNextQuestion(client, quiz) {
     if (quiz.currentQuestionIndex >= quiz.questions.length) {
-        endQuiz(quiz.id);
+        endQuiz(quiz);
         return;
     }
 
     const question = quiz.questions[quiz.currentQuestionIndex];
-    await sendQuestionToGroup(quiz.group.id, question);
+    await sendQuestionToGroup(client, quiz.group.id, question);
 
     const answerListener = (message) => {
-        if (message.from === quiz.group.id && message.body === question.correctAnswer) {
+        // console.log('message body is: ', message.body)
+        // console.log('message from is: ', message.to)
+        // console.log('group id is: ', quiz.group.id)
+        if (message.to === quiz.group.id._serialized && message.body === question.correctAnswer) {
             const correctParticipant = quiz.participants.find(p => p.id._serialized === message.author);
             if (correctParticipant) {
                 correctParticipant.score++;
@@ -84,17 +93,18 @@ async function askNextQuestion(quiz) {
     client.on('message_create', answerListener);
 
     setTimeout(() => {
-        client.removeListener('message_create', answerListener);
+        // console.log('TIMEOUT TRIGGERED');
+        if (client.listeners('message_create').includes(answerListener)) {
+            // console.log('REMOVED LISTENNER');
+            client.removeListener('message_create', answerListener);
+        }
+        // console.log('PASSED REMOVAL');
         quiz.currentQuestionIndex++;
-        askNextQuestion(quiz);
+        askNextQuestion(client, quiz);
     }, quiz.questionTimeLimit);
 }
 
-function endQuiz(quizId) {
-    const quiz = quizzes.find(q => q.id === quizId);
-
-    if (!quiz) return 'Quiz not found.';
-
+function endQuiz(quiz) {
     quiz.status = 'ended';
     quiz.endTime = new Date();
 
@@ -114,8 +124,8 @@ function printFinalBoard(quiz) {
     return board;
 }
 
-async function sendQuestionToGroup(groupId, question) {
-    const chat = await client.getChatById(groupId);
+async function sendQuestionToGroup(client, groupId, question) {
+    const chat = await client.getChatById(groupId._serialized);
     await chat.sendMessage(`Question: ${question.text}`);
 }
 
