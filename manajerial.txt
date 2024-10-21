@@ -1,0 +1,10 @@
+[
+  {
+    "question": "1. Apa singkatan dari CPNS?\nA) Calon Pegawai Negara Sipil\nB) Calon Pegawai Negeri Sipil\nC) Calon Pegawai Nasional Sipil\nD) Calon Pelayan Negeri Sipil",
+    "answer": "B"
+  },
+  {
+    "question": "2. Apa lambang negara Indonesia?\nA) Komodo\nB) Garuda\nC) Elang\nD) Kijang",
+    "answer": "B"
+  }
+]

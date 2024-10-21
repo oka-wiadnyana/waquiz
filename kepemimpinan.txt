@@ -1,0 +1,10 @@
+[
+  {
+    "question": "1. Apa itu kepemimpinan?\nA) Contoh A\nB) Contoh B\nC) Contoh C\nD) Contoh D",
+    "answer": "C"
+  },
+  {
+    "question": "2. Siapa bisa jadi pemimpin?\nA) Cth A\nB) Cth B\nC) Cth C\nD) Cth D",
+    "answer": "B"
+  }
+]
